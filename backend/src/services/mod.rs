@@ -1,2 +1,3 @@
-// Services will be added as we implement each feature
-// This file is a placeholder for now
+pub mod auth_service;
+
+pub use auth_service::AuthService;

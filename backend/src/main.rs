@@ -1,6 +1,10 @@
 mod config;
 mod handlers;
+mod middleware;
+mod models;
+mod repositories;
 mod routes;
+mod services;
 mod utils;
 
 use tower_http::{
@@ -37,7 +41,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     config::run_migrations(&pool).await?;
 
     // Create router
-    let app = routes::create_router(pool)
+    let app = routes::create_router(pool, settings.jwt_secret.clone())
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(DefaultMakeSpan::new().level(Level::INFO))
