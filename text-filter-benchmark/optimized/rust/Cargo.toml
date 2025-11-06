@@ -1,0 +1,15 @@
+[package]
+name = "text-filter-optimized"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+memchr = "2.7"
+rayon = "1.8"
+memmap2 = "0.9"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
