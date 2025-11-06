@@ -1,0 +1,12 @@
+# Compiled binaries
+zig/filter
+go/filter
+rust/target/
+
+# Test data (large file)
+data/testdata.txt
+testdata.txt
+
+# Object files
+*.o
+*.obj
