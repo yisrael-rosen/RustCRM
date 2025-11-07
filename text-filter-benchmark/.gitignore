@@ -1,8 +1,10 @@
 # Compiled binaries
 zig/filter
 zig/filter_keywords
+zig/filter_html_keywords
 optimized/zig/filter_optimized
 optimized/zig/filter_keywords_optimized
+optimized/zig/filter_html_keywords_optimized
 rust/target/
 optimized/rust/target/
 go/filter
@@ -10,6 +12,7 @@ optimized/go/filter_optimized
 
 # Test data (large files)
 data/test_hebrew_large.txt
+data/test_crm_large.html
 data/testdata.txt
 data/*.log
 data/*.bin

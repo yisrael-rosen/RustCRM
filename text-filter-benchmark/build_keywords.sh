@@ -39,8 +39,32 @@ zig build-exe optimized/zig/filter_keywords_optimized.zig \
 echo "✓ Optimized version built: optimized/zig/filter_keywords_optimized"
 echo
 
+# Build HTML keyword filters
+echo "Building HTML keyword filters..."
+
+echo "Building basic HTML keyword filter..."
+zig build-exe zig/filter_html_keywords.zig \
+    -O ReleaseFast \
+    -femit-bin=zig/filter_html_keywords
+
+echo "✓ Basic HTML version built: zig/filter_html_keywords"
+echo
+
+echo "Building optimized HTML keyword filter..."
+zig build-exe optimized/zig/filter_html_keywords_optimized.zig \
+    -O ReleaseFast \
+    -femit-bin=optimized/zig/filter_html_keywords_optimized
+
+echo "✓ Optimized HTML version built: optimized/zig/filter_html_keywords_optimized"
+echo
+
 echo "Build completed successfully!"
 echo
 echo "Usage:"
-echo "  ./zig/filter_keywords <input_file>"
-echo "  ./optimized/zig/filter_keywords_optimized <input_file>"
+echo "  Text filters:"
+echo "    ./zig/filter_keywords <input_file>"
+echo "    ./optimized/zig/filter_keywords_optimized <input_file>"
+echo
+echo "  HTML filters:"
+echo "    ./zig/filter_html_keywords <input_file.html>"
+echo "    ./optimized/zig/filter_html_keywords_optimized <input_file.html>"
