@@ -1,17 +1,26 @@
 # Compiled binaries
 zig/filter
-go/filter
-rust/target/
-
-# Optimized binaries
+zig/filter_keywords
 optimized/zig/filter_optimized
-optimized/go/filter_optimized
+optimized/zig/filter_keywords_optimized
+rust/target/
 optimized/rust/target/
+go/filter
+optimized/go/filter_optimized
 
-# Test data (large file)
+# Test data (large files)
+data/test_hebrew_large.txt
 data/testdata.txt
-testdata.txt
+data/*.log
+data/*.bin
 
-# Object files
+# Zig cache
+.zig-cache/
+zig-out/
+
+# Build artifacts
 *.o
-*.obj
+*.so
+*.dylib
+*.dll
+*.exe
