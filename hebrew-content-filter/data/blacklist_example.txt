@@ -1,0 +1,17 @@
+# Hebrew Content Filter - Example Blacklist
+# Lines starting with # are comments
+# Each line should contain one base word/root
+#
+# NOTE: This is a DEMONSTRATION file with non-explicit examples
+# In production, replace with actual inappropriate terms
+#
+# Format: One word per line (base form/root)
+# The system will automatically generate inflections
+
+# Example test patterns (for demonstration only)
+בדיקה
+דוגמא
+מבחן
+
+# In a real system, you would add actual inappropriate terms here
+# organized by category, with one root per line

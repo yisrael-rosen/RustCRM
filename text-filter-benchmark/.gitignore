@@ -1,0 +1,17 @@
+# Compiled binaries
+zig/filter
+go/filter
+rust/target/
+
+# Optimized binaries
+optimized/zig/filter_optimized
+optimized/go/filter_optimized
+optimized/rust/target/
+
+# Test data (large file)
+data/testdata.txt
+testdata.txt
+
+# Object files
+*.o
+*.obj
