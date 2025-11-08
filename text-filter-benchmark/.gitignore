@@ -35,3 +35,4 @@ zig-out/
 *.dylib
 *.dll
 *.exe
+context_analyzer
