@@ -2,6 +2,7 @@
 zig/filter
 zig/filter_keywords
 zig/filter_html_keywords
+zig/filter_html_classifier
 optimized/zig/filter_optimized
 optimized/zig/filter_keywords_optimized
 optimized/zig/filter_html_keywords_optimized
@@ -9,10 +10,13 @@ rust/target/
 optimized/rust/target/
 go/filter
 optimized/go/filter_optimized
+filter_html_classifier
+filter_html_classifier.o
 
 # Test data (large files)
 data/test_hebrew_large.txt
 data/test_crm_large.html
+data/test_sensitive.html
 data/testdata.txt
 data/*.log
 data/*.bin

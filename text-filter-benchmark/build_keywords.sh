@@ -58,6 +58,14 @@ zig build-exe optimized/zig/filter_html_keywords_optimized.zig \
 echo "✓ Optimized HTML version built: optimized/zig/filter_html_keywords_optimized"
 echo
 
+echo "Building multi-layer content classifier..."
+zig build-exe zig/filter_html_classifier.zig \
+    -O ReleaseFast \
+    -femit-bin=zig/filter_html_classifier
+
+echo "✓ Classifier built: zig/filter_html_classifier"
+echo
+
 echo "Build completed successfully!"
 echo
 echo "Usage:"
@@ -68,3 +76,7 @@ echo
 echo "  HTML filters:"
 echo "    ./zig/filter_html_keywords <input_file.html>"
 echo "    ./optimized/zig/filter_html_keywords_optimized <input_file.html>"
+echo
+echo "  Multi-layer classifier (recommended for production):"
+echo "    ./zig/filter_html_classifier <input_file.html>"
+echo "    ./test_classifier_batch.sh  # Test multiple files"
