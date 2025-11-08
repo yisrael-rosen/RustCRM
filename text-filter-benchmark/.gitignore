@@ -12,6 +12,8 @@ go/filter
 optimized/go/filter_optimized
 filter_html_classifier
 filter_html_classifier.o
+filter_html_classifier_extended
+filter_html_classifier_extended.o
 
 # Test data (large files)
 data/test_hebrew_large.txt

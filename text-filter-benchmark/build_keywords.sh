@@ -66,6 +66,14 @@ zig build-exe zig/filter_html_classifier.zig \
 echo "✓ Classifier built: zig/filter_html_classifier"
 echo
 
+echo "Building extended multi-layer classifier (215 keywords)..."
+zig build-exe zig/filter_html_classifier_extended.zig \
+    -O ReleaseFast \
+    -femit-bin=filter_html_classifier_extended
+
+echo "✓ Extended classifier built: filter_html_classifier_extended"
+echo
+
 echo "Build completed successfully!"
 echo
 echo "Usage:"
@@ -77,6 +85,10 @@ echo "  HTML filters:"
 echo "    ./zig/filter_html_keywords <input_file.html>"
 echo "    ./optimized/zig/filter_html_keywords_optimized <input_file.html>"
 echo
-echo "  Multi-layer classifier (recommended for production):"
-echo "    ./zig/filter_html_classifier <input_file.html>"
-echo "    ./test_classifier_batch.sh  # Test multiple files"
+echo "  Multi-layer classifiers:"
+echo "    ./zig/filter_html_classifier <input_file.html>  # 86 keywords, 57% LLM reduction"
+echo "    ./filter_html_classifier_extended <input_file.html>  # 215 keywords, 71% LLM reduction"
+echo
+echo "  Batch tests:"
+echo "    ./test_classifier_batch.sh  # Test original (86 keywords)"
+echo "    ./test_classifier_extended_batch.sh  # Test extended (215 keywords)"
