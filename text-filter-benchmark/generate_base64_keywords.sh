@@ -45,18 +45,30 @@ done
 cat >> "$OUTPUT" <<'EOF'
 };
 
-/// Business keywords (base64 encoded)
+/// Business keywords (base64 encoded - 3 alignment variants each)
+/// Each keyword has 3 variants to handle different base64 chunk alignments
+/// This solves the "alignment problem" where keywords can be split across base64 boundaries
 pub const BUSINESS_KEYWORDS_BASE64 = [_][]const u8{
 EOF
 
-# Add base64 encoded versions
-echo "Generating base64 for business keywords..."
+# Add base64 encoded versions (3 alignments each)
+echo "Generating base64 for business keywords (3 alignments per keyword)..."
 COUNT=0
 echo "$BUSINESS_KW" | while IFS= read -r keyword; do
     if [ -n "$keyword" ]; then
-        BASE64=$(echo -n "$keyword" | base64)
-        echo "    \"$BASE64\",  // $keyword" >> "$OUTPUT"
-        COUNT=$((COUNT + 1))
+        # Alignment 0: no prefix
+        BASE64_0=$(echo -n "$keyword" | base64 | sed 's/=*$//')
+
+        # Alignment 1: 1-byte prefix, skip 2 chars
+        BASE64_1=$(echo -n "X$keyword" | base64 | cut -c3- | sed 's/=*$//')
+
+        # Alignment 2: 2-byte prefix, skip 3 chars
+        BASE64_2=$(echo -n "XX$keyword" | base64 | cut -c4- | sed 's/=*$//')
+
+        echo "    \"$BASE64_0\",  // $keyword (align 0)" >> "$OUTPUT"
+        echo "    \"$BASE64_1\",  // $keyword (align 1)" >> "$OUTPUT"
+        echo "    \"$BASE64_2\",  // $keyword (align 2)" >> "$OUTPUT"
+        COUNT=$((COUNT + 3))
     fi
 done
 
@@ -81,16 +93,28 @@ done
 cat >> "$OUTPUT" <<'EOF'
 };
 
-/// Sensitive keywords (base64 encoded)
+/// Sensitive keywords (base64 encoded - 3 alignment variants each)
+/// Each keyword has 3 variants to handle different base64 chunk alignments
+/// This solves the "alignment problem" where keywords can be split across base64 boundaries
 pub const SENSITIVE_KEYWORDS_BASE64 = [_][]const u8{
 EOF
 
-# Add base64 encoded versions
-echo "Generating base64 for sensitive keywords..."
+# Add base64 encoded versions (3 alignments each)
+echo "Generating base64 for sensitive keywords (3 alignments per keyword)..."
 echo "$SENSITIVE_KW" | while IFS= read -r keyword; do
     if [ -n "$keyword" ]; then
-        BASE64=$(echo -n "$keyword" | base64)
-        echo "    \"$BASE64\",  // $keyword" >> "$OUTPUT"
+        # Alignment 0: no prefix
+        BASE64_0=$(echo -n "$keyword" | base64 | sed 's/=*$//')
+
+        # Alignment 1: 1-byte prefix, skip 2 chars
+        BASE64_1=$(echo -n "X$keyword" | base64 | cut -c3- | sed 's/=*$//')
+
+        # Alignment 2: 2-byte prefix, skip 3 chars
+        BASE64_2=$(echo -n "XX$keyword" | base64 | cut -c4- | sed 's/=*$//')
+
+        echo "    \"$BASE64_0\",  // $keyword (align 0)" >> "$OUTPUT"
+        echo "    \"$BASE64_1\",  // $keyword (align 1)" >> "$OUTPUT"
+        echo "    \"$BASE64_2\",  // $keyword (align 2)" >> "$OUTPUT"
     fi
 done
 
@@ -148,18 +172,19 @@ echo ""
 BUSINESS_COUNT=$(echo "$BUSINESS_KW" | grep -c .)
 SENSITIVE_COUNT=$(echo "$SENSITIVE_KW" | grep -c .)
 TOTAL_ORIGINAL=$((BUSINESS_COUNT + SENSITIVE_COUNT))
-TOTAL_WITH_BASE64=$((TOTAL_ORIGINAL * 2))
+TOTAL_BASE64=$((TOTAL_ORIGINAL * 3))  # 3 alignments per keyword
+TOTAL_WITH_BASE64=$((TOTAL_ORIGINAL + TOTAL_BASE64))
 
 echo "Statistics:"
-echo "  Business keywords:  $BUSINESS_COUNT (original) + $BUSINESS_COUNT (base64) = $((BUSINESS_COUNT * 2))"
-echo "  Sensitive keywords: $SENSITIVE_COUNT (original) + $SENSITIVE_COUNT (base64) = $((SENSITIVE_COUNT * 2))"
+echo "  Business keywords:  $BUSINESS_COUNT (original) + $((BUSINESS_COUNT * 3)) (base64 x3 alignments) = $((BUSINESS_COUNT * 4))"
+echo "  Sensitive keywords: $SENSITIVE_COUNT (original) + $((SENSITIVE_COUNT * 3)) (base64 x3 alignments) = $((SENSITIVE_COUNT * 4))"
 echo "  Total keywords:     $TOTAL_WITH_BASE64"
 echo ""
 echo "Overhead estimation:"
 echo "  Original (215 keywords):    6-8ms"
-echo "  With base64 ($TOTAL_WITH_BASE64 keywords): $((TOTAL_ORIGINAL / 215 * 6))-$((TOTAL_ORIGINAL / 215 * 8))ms"
+echo "  With base64 ($TOTAL_WITH_BASE64 keywords): $((TOTAL_WITH_BASE64 / 215 * 6))-$((TOTAL_WITH_BASE64 / 215 * 8))ms"
 echo ""
-echo "✓ Done! Keywords with base64 encodings are ready to use."
+echo "✓ Done! Keywords with base64 encodings (3 alignments each) are ready to use."
 echo ""
 echo "Usage:"
 echo "  Simply replace keyword arrays in your classifier with:"
@@ -168,6 +193,8 @@ echo "    - ALL_SENSITIVE_KEYWORDS (includes base64)"
 echo ""
 echo "Benefits:"
 echo "  ✓ 100% coverage for base64 encoded content"
+echo "  ✓ Handles all 3 possible base64 chunk alignments"
+echo "  ✓ Solves the 'alignment problem' where keywords split across boundaries"
 echo "  ✓ Zero runtime decoding overhead"
 echo "  ✓ No additional code needed"
 echo "  ✓ Works with existing keyword matching"
