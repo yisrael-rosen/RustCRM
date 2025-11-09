@@ -36,3 +36,5 @@ zig-out/
 *.dll
 *.exe
 context_analyzer
+raw_text_classifier
+raw_text_classifier.o
