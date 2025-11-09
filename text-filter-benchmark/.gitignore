@@ -56,3 +56,6 @@ libsimple_wasm_test.a.o
 
 # Test files (generated)
 data/test_smart_parser.html
+data/test_wasm_*.html
+smart_scanner
+smart_scanner.o
