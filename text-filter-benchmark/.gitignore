@@ -44,6 +44,8 @@ enhanced_html_parser
 enhanced_html_parser.o
 base64_decoder
 base64_decoder.o
+test_base64_keywords
+test_base64_keywords.o
 
 # Test files (generated)
 data/test_smart_parser.html
