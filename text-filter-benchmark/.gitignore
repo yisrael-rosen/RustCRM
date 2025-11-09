@@ -47,5 +47,12 @@ base64_decoder.o
 test_base64_keywords
 test_base64_keywords.o
 
+# WASM files (generated)
+*.wasm
+*.wasm.o
+simple_wasm_test
+libsimple_wasm_test.a
+libsimple_wasm_test.a.o
+
 # Test files (generated)
 data/test_smart_parser.html

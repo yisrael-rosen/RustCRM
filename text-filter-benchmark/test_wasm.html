@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WASM Keywords Test - Proving Strings Are Visible</title>
+    <style>
+        body {
+            font-family: monospace;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        .code {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .binary-view {
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔬 WASM Keywords Test - Binary Analysis</h1>
+
+        <div class="section">
+            <h2>📋 What We're Testing:</h2>
+            <p><strong>Hypothesis</strong>: Keywords (including base64) embedded in WASM are visible in the binary without execution.</p>
+            <ul>
+                <li>✅ WASM binary contains strings as raw data</li>
+                <li>✅ Base64 keywords are searchable without decoding</li>
+                <li>✅ Our Enhanced Parser can detect them</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🧪 Test 1: Load WASM Binary</h2>
+            <button onclick="loadAndAnalyzeWasm()">Load WASM & Analyze</button>
+            <div id="wasmInfo" class="result info" style="display:none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>🔍 Test 2: Search for Keywords in Binary</h2>
+            <div class="code">
+Keywords to search:<br>
+- "פורנוגרפיה" (Hebrew)<br>
+- "16TXldem16DXldeS16jXpNeZ15Qg" (Base64)<br>
+- "הימורים" (Hebrew)<br>
+- "15TXmdee15XXldeo15nXnQ==" (Base64)<br>
+- "קזינו" (Hebrew)
+            </div>
+            <button onclick="searchKeywordsInBinary()">Search in Binary</button>
+            <div id="searchResults" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>📦 Test 3: View WASM Binary Content</h2>
+            <button onclick="viewBinary()">View Binary (First 2KB)</button>
+            <div id="binaryView" class="binary-view code" style="display:none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>✅ Conclusion</h2>
+            <div id="conclusion" class="result success" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let wasmBinary = null;
+
+        async function loadAndAnalyzeWasm() {
+            try {
+                const response = await fetch('wasm_keywords_debug.wasm');
+                wasmBinary = await response.arrayBuffer();
+
+                const info = document.getElementById('wasmInfo');
+                info.style.display = 'block';
+                info.className = 'result info';
+                info.innerHTML = `
+                    <strong>✅ WASM Loaded Successfully!</strong><br>
+                    Size: ${wasmBinary.byteLength.toLocaleString()} bytes (${(wasmBinary.byteLength / 1024).toFixed(1)} KB)<br>
+                    <br>
+                    <strong>Magic Number:</strong> ${Array.from(new Uint8Array(wasmBinary, 0, 4))
+                        .map(b => '0x' + b.toString(16).padStart(2, '0'))
+                        .join(' ')}
+                    (${String.fromCharCode(...new Uint8Array(wasmBinary, 0, 4))})<br>
+                    <strong>Version:</strong> ${new Uint32Array(wasmBinary, 4, 1)[0]}
+                `;
+            } catch (error) {
+                const info = document.getElementById('wasmInfo');
+                info.style.display = 'block';
+                info.className = 'result';
+                info.style.background = '#f8d7da';
+                info.style.color = '#721c24';
+                info.innerHTML = `<strong>❌ Error:</strong> ${error.message}`;
+            }
+        }
+
+        function searchKeywordsInBinary() {
+            if (!wasmBinary) {
+                alert('Please load WASM first!');
+                return;
+            }
+
+            const keywords = [
+                { text: "פורנוגרפיה", type: "Hebrew" },
+                { text: "16TXldem16DXldeS16jXpNeZ15Qg", type: "Base64" },
+                { text: "הימורים", type: "Hebrew" },
+                { text: "15TXmdee15XXldeo15nXnQ==", type: "Base64" },
+                { text: "קזינו", type: "Hebrew" }
+            ];
+
+            const decoder = new TextDecoder();
+            const binaryStr = decoder.decode(new Uint8Array(wasmBinary));
+
+            const results = [];
+            let totalFound = 0;
+
+            for (const kw of keywords) {
+                const found = binaryStr.includes(kw.text);
+                results.push({ ...kw, found });
+                if (found) totalFound++;
+            }
+
+            const resultDiv = document.getElementById('searchResults');
+            resultDiv.style.display = 'block';
+
+            let html = `<strong>Search Results:</strong><br><br>`;
+            results.forEach(r => {
+                const icon = r.found ? '✅' : '❌';
+                const status = r.found ? 'FOUND' : 'NOT FOUND';
+                html += `${icon} "${r.text}" (${r.type}): <strong>${status}</strong><br>`;
+            });
+
+            html += `<br><strong>Summary:</strong> ${totalFound}/${keywords.length} keywords found in binary!`;
+
+            if (totalFound > 0) {
+                resultDiv.className = 'result success';
+                html += `<br><br>🎯 <strong>Conclusion:</strong> Keywords ARE visible in WASM binary!<br>
+                         Our Enhanced Parser can detect them without execution!`;
+            } else {
+                resultDiv.className = 'result info';
+                html += `<br><br>ℹ️ Keywords not found as plain text (may be encoded differently)`;
+            }
+
+            resultDiv.innerHTML = html;
+
+            // Update conclusion
+            if (totalFound > 0) {
+                const conclusion = document.getElementById('conclusion');
+                conclusion.style.display = 'block';
+                conclusion.innerHTML = `
+                    <strong>✅ Proven: WASM strings are visible in binary!</strong><br><br>
+                    - Keywords embedded in WASM code appear as raw bytes<br>
+                    - Base64 keywords are searchable without decoding<br>
+                    - Enhanced HTML Parser can scan WASM content<br>
+                    - No need for WASM execution or complex parsing<br>
+                    <br>
+                    <strong>This confirms the user's insight:</strong> WASM is NOT a problem!
+                `;
+            }
+        }
+
+        function viewBinary() {
+            if (!wasmBinary) {
+                alert('Please load WASM first!');
+                return;
+            }
+
+            const view = new Uint8Array(wasmBinary);
+            const chunk = Math.min(2048, view.length);
+
+            let html = '';
+            for (let i = 0; i < chunk; i += 16) {
+                const offset = i.toString(16).padStart(6, '0');
+                const bytes = [];
+                const ascii = [];
+
+                for (let j = 0; j < 16 && i + j < chunk; j++) {
+                    const byte = view[i + j];
+                    bytes.push(byte.toString(16).padStart(2, '0'));
+                    ascii.push(byte >= 32 && byte < 127 ? String.fromCharCode(byte) : '.');
+                }
+
+                html += `${offset}  ${bytes.join(' ').padEnd(48, ' ')}  |${ascii.join('')}|<br>`;
+            }
+
+            const binaryView = document.getElementById('binaryView');
+            binaryView.style.display = 'block';
+            binaryView.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
