@@ -40,6 +40,10 @@ raw_text_classifier
 raw_text_classifier.o
 smart_html_parser
 smart_html_parser.o
+enhanced_html_parser
+enhanced_html_parser.o
+base64_decoder
+base64_decoder.o
 
 # Test files (generated)
 data/test_smart_parser.html
