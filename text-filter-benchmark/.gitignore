@@ -38,3 +38,8 @@ zig-out/
 context_analyzer
 raw_text_classifier
 raw_text_classifier.o
+smart_html_parser
+smart_html_parser.o
+
+# Test files (generated)
+data/test_smart_parser.html
